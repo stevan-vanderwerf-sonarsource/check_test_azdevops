@@ -1,19 +1,20 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- main
-
-pool:
-  vmImage: ubuntu-latest
+- main # or the name of your main branch
+- feature/*
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+# Prepare Analysis Configuration task
+- task: SonarQubePrepare@6
+  inputs:
+    SonarQube: 'sq996'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'check_test_azdevops'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+# Run Code Analysis task
+- task: SonarQubeAnalyze@6
+
+# Publish Quality Gate Result task
+- task: SonarQubePublish@6
+  inputs:
+    pollingTimeoutSec: '300'
